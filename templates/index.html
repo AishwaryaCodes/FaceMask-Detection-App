@@ -3,16 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/style.css">
     <title>Face Mask Detection</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
     <div class="container">
         <h1>Face Mask Detection</h1>
-        <div class="video-container">
-            <img src="{{ url_for('video_feed') }}" alt="Video Stream">
+        <div id="webcam-container">
+            <video id="webcam" width="640" height="480" autoplay></video>
+            <button id="startButton">Start Detection</button>
         </div>
-        <p>Press <b>Q</b> in the terminal to quit the application.</p>
+        <div id="result">
+            <!-- Results will be displayed here -->
+        </div>
     </div>
+
+    <script>
+        const webcam = document.getElementById('webcam');
+        const startButton = document.getElementById('startButton');
+        const resultDiv = document.getElementById('result');
+        let detectionInterval;
+
+        // Access webcam
+        async function startWebcam() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: true
+                });
+                webcam.srcObject = stream;
+            } catch (error) {
+                console.error("Error accessing webcam:", error);
+            }
+        }
+
+        // Capture image and send it to the backend for prediction
+        function captureAndDetectMask() {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = webcam.videoWidth;
+            canvas.height = webcam.videoHeight;
+            ctx.drawImage(webcam, 0, 0, canvas.width, canvas.height);
+
+            // Convert canvas image to Base64
+            const imageData = canvas.toDataURL('image/jpeg');
+
+            // Send Base64 image to backend
+            fetch('/detect-mask', {
+                method: 'POST',
+                body: JSON.stringify({ image: imageData }),
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    const { label, confidence } = data;
+                    resultDiv.innerHTML = `Detected: ${label} with ${confidence}% confidence`;
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        // Start Detection
+        startButton.addEventListener('click', () => {
+            if (!detectionInterval) {
+                detectionInterval = setInterval(captureAndDetectMask, 2000); // Detect every 2 seconds
+                startButton.textContent = "Stop Detection";
+            } else {
+                clearInterval(detectionInterval);
+                detectionInterval = null;
+                startButton.textContent = "Start Detection";
+            }
+        });
+
+        // Start webcam when the page loads
+        window.onload = startWebcam;
+    </script>
 </body>
 </html>

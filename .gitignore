@@ -1,0 +1,47 @@
+# Byte-compiled Python files
+__pycache__/
+*.py[cod]
+
+# Virtual environments
+venv/
+env/
+
+# TensorFlow and machine learning artifacts
+saved_model/
+*.h5
+*.pb
+*.tflite
+
+# Large dataset or temporary files
+data/
+*.csv
+*.tsv
+*.json
+*.npy
+*.pkl
+*.zip
+*.tar.gz
+*.tmp
+
+# OpenCV generated files (if applicable)
+*.avi
+*.mp4
+
+# Logs and debugging files
+*.log
+*.txt
+*.bak
+
+# Python testing artifacts
+.coverage
+.cache/
+htmlcov/
+*.pytest_cache
+
+# OS-generated files
+.DS_Store
+Thumbs.db
+
+# IDE/editor specific settings
+.vscode/
+.idea/
