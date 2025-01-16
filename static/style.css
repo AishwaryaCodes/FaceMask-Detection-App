@@ -1,0 +1,27 @@
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background-color: #f4f4f4;
+}
+
+h1 {
+    color: #333;
+}
+
+.container {
+    margin-top: 50px;
+}
+
+.video-container {
+    margin: auto;
+    width: 80%;
+    max-width: 640px;
+    background: #000;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+video {
+    width: 100%;
+}
+
